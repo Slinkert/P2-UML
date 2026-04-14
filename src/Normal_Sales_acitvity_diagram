@@ -68,7 +68,7 @@ if (Cancel sale?) then (yes)
   :Validate deletion;
 
   |Database|
-  :Remove sale record;
+  :Remove record;
 
   |Server|
   :Return No Content;
@@ -97,7 +97,21 @@ note right: POST /api/sales/regular/{id}/complete
 :Return OK\n+ completed sale;
 
 |Manager|
-:Sale completed;
+:Request sale report;
+note right: GET /api/sales/regular/{id}/report
+
+|Server|
+:Fetch completed sale;
+:Compile report data\n(materials, quantities,\ntotal revenue, buyer,\ndate);
+
+|Database|
+:Return full sale record;
+
+|Server|
+:Return OK\n+ report data;
+
+|Manager|
+:View sale report;
 
 stop
 
