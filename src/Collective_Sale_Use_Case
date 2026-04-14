@@ -1,0 +1,81 @@
+@startuml Collective_Selling_Use_Case
+
+left to right direction
+skinparam packageStyle rectangle
+
+' ─────────────────────────────────────
+' ACTORS
+' ─────────────────────────────────────
+actor "Cooperative Manager" as Manager
+actor "Contributor" as Contributor
+actor "Creator" as Creator
+actor "Buyer" as Buyer
+actor "Server\n<<service>>" as Server
+actor "Database" as Database
+
+Manager --|> Contributor
+Manager --|> Creator
+
+' ─────────────────────────────────────
+' SUBSYSTEM
+' ─────────────────────────────────────
+rectangle "<<Subsystem>>\nCollective selling" {
+
+  usecase "Generate transparent\nreports" as UC_Report
+  usecase "Create collective sale" as UC_Create
+  usecase "Join collective sale" as UC_Join
+  usecase "Leave collective sale" as UC_Leave
+  usecase "Delete collective sale" as UC_Delete
+  usecase "Set sold" as UC_Sold
+  usecase "Add material amount\nof type" as UC_AddMaterial
+
+}
+
+' ─────────────────────────────────────
+' ACTOR → USE CASE RELATIONS
+' ─────────────────────────────────────
+Contributor --> UC_Report
+Contributor --> UC_Join
+Contributor --> UC_Leave
+Contributor --> UC_AddMaterial
+
+Creator --> UC_Create
+Creator --> UC_Delete
+Creator --> UC_Sold
+Creator --> UC_Report
+
+UC_Report   --> Server
+UC_Create   --> Server
+UC_Join     --> Server
+UC_Leave    --> Server
+UC_Delete   --> Server
+UC_Sold     --> Server
+UC_AddMaterial --> Server
+
+Server --> Database
+
+' ─────────────────────────────────────
+' GENERATE TRANSPARENT REPORTS — includes
+' ─────────────────────────────────────
+usecase "Distribute revenue\nproportionally" as UC_Distribute
+usecase "Calculate contribution\npercentages per material" as UC_CalcContrib
+
+UC_Report ..> UC_Distribute   : <<include>>
+UC_Report ..> UC_CalcContrib  : <<include>>
+
+' ─────────────────────────────────────
+' CREATE COLLECTIVE SALE — includes / extends
+' ─────────────────────────────────────
+usecase "Invite cooperatives" as UC_Invite
+usecase "Add material type(s)" as UC_AddType
+usecase "Set unit price for\nmaterial" as UC_UnitPrice
+usecase "Set expected\nsales date" as UC_SalesDate
+usecase "Set Buyer" as UC_SetBuyer
+
+UC_Create ..> UC_Invite    : <<include>>
+UC_Create ..> UC_AddType   : <<include>>
+UC_Create ..> UC_SalesDate : <<include>>
+UC_Create ..> UC_SetBuyer  : <<include>>
+UC_UnitPrice ..> UC_AddType : <<extend>>
+
+@enduml
