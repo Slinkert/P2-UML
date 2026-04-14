@@ -1,0 +1,62 @@
+@startuml Notice_Board_Use_Case
+
+left to right direction
+skinparam packageStyle rectangle
+
+' ─────────────────────────────────────
+' ACTORS
+' ─────────────────────────────────────
+actor "Worker" as Worker
+actor "Manager" as Manager
+actor "Admin" as Admin
+
+Worker --|> Manager
+Manager --|> Admin
+
+' ─────────────────────────────────────
+' SUBSYSTEM
+' ─────────────────────────────────────
+rectangle "<<Subsystem>>\nNotice Board" {
+
+  usecase "View Notices" as UC_View
+  usecase "Filter notices\nby priority" as UC_Filter
+  usecase "View notice by id" as UC_ViewById
+  usecase "Create notice" as UC_Create
+  usecase "Edit notice" as UC_Edit
+  usecase "Delete notice" as UC_Delete
+  usecase "View global notices" as UC_Global
+
+}
+
+' ─────────────────────────────────────
+' ACTOR → USE CASE RELATIONS
+' ─────────────────────────────────────
+Worker  --> UC_View
+Worker  --> UC_Filter
+Worker  --> UC_ViewById
+
+Manager --> UC_Create
+Manager --> UC_Edit
+Manager --> UC_Delete
+
+Admin   --> UC_Global
+
+' ─────────────────────────────────────
+' CREATE NOTICE — includes
+' ─────────────────────────────────────
+usecase "Set priority" as UC_Priority
+usecase "Set expire date" as UC_Expire
+usecase "Set title" as UC_Title
+usecase "Set message" as UC_Message
+
+UC_Create ..> UC_Priority : <<include>>
+UC_Create ..> UC_Expire   : <<include>>
+UC_Create ..> UC_Title    : <<include>>
+UC_Create ..> UC_Message  : <<include>>
+
+' ─────────────────────────────────────
+' EDIT NOTICE — extends CREATE
+' ─────────────────────────────────────
+UC_Edit --|> UC_Create
+
+@enduml
