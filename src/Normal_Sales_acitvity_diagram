@@ -1,0 +1,104 @@
+@startuml Normal_Sales_Activity
+
+skinparam defaultFontName Arial
+skinparam activityBorderColor #555555
+skinparam activityBackgroundColor #f9f9f9
+skinparam activityFontSize 13
+
+|Manager|
+|Buyer|
+|Server|
+|Database|
+
+|Manager|
+start
+
+:Create sale;
+note right: POST /api/sales/regular
+
+|Server|
+:Validate request;
+:Create sale record;
+
+|Database|
+:Save sale;
+:Return sale data;
+
+|Server|
+:Return Created\n+ sale id;
+
+|Manager|
+:View sale details;
+note right: GET /api/sales/regular/{id}
+
+|Server|
+:Fetch sale by id;
+
+|Database|
+:Return sale record;
+
+|Server|
+:Return OK\n+ sale data;
+
+|Manager|
+if (Update needed?) then (yes)
+  :Edit sale;
+  note right: PATCH /api/sales/regular/{id}
+
+  |Server|
+  :Validate changes;
+  :Apply updates;
+
+  |Database|
+  :Update sale record;
+  :Return updated data;
+
+  |Server|
+  :Return OK\n+ updated sale;
+
+  |Manager|
+else (no)
+endif
+
+if (Cancel sale?) then (yes)
+  :Delete sale;
+  note right: DELETE /api/sales/regular/{id}
+
+  |Server|
+  :Validate deletion;
+
+  |Database|
+  :Remove sale record;
+
+  |Server|
+  :Return No Content;
+
+  |Manager|
+  stop
+else (no)
+endif
+
+|Buyer|
+:Agrees to purchase;
+
+|Manager|
+:Complete sale;
+note right: POST /api/sales/regular/{id}/complete
+
+|Server|
+:Validate sale is completable;
+:Mark sale as completed;
+
+|Database|
+:Update status = completed;
+:Return final record;
+
+|Server|
+:Return OK\n+ completed sale;
+
+|Manager|
+:Sale completed;
+
+stop
+
+@enduml
